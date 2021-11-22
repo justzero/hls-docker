@@ -1,0 +1,24 @@
+version: '3.1'
+services:
+  live-push:
+    restart: always
+    image: nf-pusher:v1
+    command: sh -c "sleep 5; ./start.sh && pm2 start ecosystem.config.js && pm2 logs"
+    container_name: live-push
+    working_dir: /app
+    stdin_open: true
+    tty: true
+    ports:
+      - 3000:3000
+    volumes:
+      - ./app:/app
+    links:
+      - live-server
+
+  live-server:
+    restart: always
+    image: alqutami/rtmp-hls
+    container_name: live-server
+    ports:
+      - 1935:1935
+      - 8080:8080
